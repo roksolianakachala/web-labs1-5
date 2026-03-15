@@ -1,4 +1,4 @@
-/*  Base */
+
 * {
   box-sizing: border-box;
 }
@@ -22,7 +22,6 @@ img {
   margin: 0 auto;
 }
 
-/*  Header + Nav  */
 .site-header {
   position: sticky;
   top: 0;
@@ -69,7 +68,7 @@ img {
   outline: none;
 }
 
-/* Hero  */
+
 .hero {
   margin-top: 18px;
   background: #ffffff;
@@ -108,7 +107,6 @@ img {
   border: 1px solid #e5e7eb;
 }
 
-/* Sections */
 .section {
   margin: 22px 0;
   background: #ffffff;
@@ -127,7 +125,6 @@ img {
   color: #4b5563;
 }
 
-/* Apartment cards (Flexbox grid) */
 .cards {
   display: flex;
   flex-wrap: wrap;
@@ -135,7 +132,7 @@ img {
 }
 
 .card {
-  flex: 1 1 280px;       /* основа Flexbox-сітки */
+  flex: 1 1 280px;       
   max-width: 350px;
   border: 1px solid #e5e7eb;
   border-radius: 16px;
@@ -195,7 +192,6 @@ img {
   outline: none;
 }
 
-/* Bookings */
 .bookings {
   display: flex;
   flex-direction: column;
@@ -213,7 +209,6 @@ img {
   margin: 0 0 6px;
 }
 
-/*  Contacts */
 .contacts-grid {
   display: flex;
   gap: 16px;
@@ -263,7 +258,6 @@ input:focus, textarea:focus {
   color: #4b5563;
 }
 
-/* Footer */
 .site-footer {
   margin-top: 28px;
   background: #111827;
@@ -282,9 +276,7 @@ input:focus, textarea:focus {
   opacity: 0.9;
 }
 
-/*  Responsive (2+ media queries) */
 
-/* Tablet */
 @media (max-width: 900px) {
   .hero {
     flex-direction: column;
@@ -304,10 +296,9 @@ input:focus, textarea:focus {
   }
 }
 
-/* Mobile */
 @media (max-width: 520px) {
   .nav-list {
-    flex-direction: column;   /* вертикальна навігація */
+    flex-direction: column;   
     gap: 8px;
     align-items: flex-start;
   }
@@ -327,5 +318,144 @@ input:focus, textarea:focus {
 
   .card img {
     height: 160px;
+  }
+}
+
+.status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.status.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.booked {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.toggle-btn {
+  margin-top: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+.nav-info {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #eef2ff;
+  border-radius: 12px;
+  color: #3730a3;
+  font-weight: 600;
+}
+
+.map-wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.city-map {
+  position: relative;
+  width: min(100%, 650px);
+  height: 420px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background:
+    linear-gradient(135deg, #dbeafe, #eff6ff);
+  overflow: hidden;
+}
+
+.city-map::before,
+.city-map::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,255,255,0.7);
+}
+
+.city-map::before {
+  width: 100%;
+  height: 14px;
+  top: 35%;
+  left: 0;
+  transform: rotate(-8deg);
+}
+
+.city-map::after {
+  width: 14px;
+  height: 100%;
+  left: 52%;
+  top: 0;
+  transform: rotate(10deg);
+}
+
+.map-marker {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: #dc2626;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  transition: transform 0.2s ease;
+}
+
+.map-marker:hover {
+  transform: scale(1.08);
+}
+
+.map-info {
+  flex: 1;
+  min-width: 260px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.form-result {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-message {
+  background: #ecfeff;
+  border: 1px solid #a5f3fc;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.message-error {
+  margin-top: 12px;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.card.highlight {
+  border-color: #a5b4fc;
+  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.12);
+}
+
+@media (max-width: 800px) {
+  .map-wrapper {
+    flex-direction: column;
+  }
+
+  .city-map {
+    width: 100%;
   }
 }
