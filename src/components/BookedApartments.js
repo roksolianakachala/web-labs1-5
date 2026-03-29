@@ -1,19 +1,18 @@
-function BookedApartments({ apartments }) {
-  const booked = apartments.filter((apartment) => apartment.booked);
-
+function BookedApartments({ bookings }) {
   return (
     <div className="booked-list">
       <h2>Список заброньованих квартир</h2>
-      {booked.length === 0 ? (
-        <p>Ще немає заброньованих квартир.</p>
-      ) : (
+
+      {bookings.length > 0 ? (
         <ul>
-          {booked.map((apartment) => (
-            <li key={apartment.id}>
-              {apartment.title} — ${apartment.price} — {apartment.location}
+          {bookings.map((booking) => (
+            <li key={booking.id}>
+              {booking.apartmentTitle} — ${booking.apartmentPrice} — {booking.apartmentLocation}
             </li>
           ))}
         </ul>
+      ) : (
+        <p>У вас поки немає заброньованих квартир.</p>
       )}
     </div>
   );

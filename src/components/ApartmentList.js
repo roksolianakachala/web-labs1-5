@@ -13,7 +13,7 @@ function ApartmentList({ apartments, onBook, onCancel }) {
           />
         ))
       ) : (
-        <p>Немає квартир за вибраними фільтрами.</p>
+        <p>У базі даних поки немає квартир.</p>
       )}
     </div>
   );
