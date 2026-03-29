@@ -48,25 +48,40 @@ export default function ApartmentDetails() {
   };
 
   const handleAddReview = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!user) {
-      alert("Спочатку увійдіть у систему");
-      return;
-    }
+  if (!user) {
+    alert("Спочатку увійдіть у систему");
+    return;
+  }
 
-   await addDoc(collection(db, "reviews"), {
-      apartmentId: id,
-      userId: user.uid,
-      userEmail: user.email,
-      userName: user.displayName || "Користувач",
-      text,
-      createdAt: serverTimestamp()
-   });
+  
+  const q = query(
+    collection(db, "bookings"),
+    where("userId", "==", user.uid),
+    where("apartmentId", "==", id)
+  );
 
-    setText("");
-    fetchReviews();
-  };
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    alert("Ви можете залишити відгук лише на квартиру, яку орендували");
+    return;
+  }
+
+  
+  await addDoc(collection(db, "reviews"), {
+    apartmentId: id,
+    userId: user.uid,
+    userEmail: user.email,
+    userName: user.displayName || "Користувач",
+    text,
+    createdAt: serverTimestamp(),
+  });
+
+  setText("");
+  fetchReviews();
+};
 
   if (!apartment) return <p>Завантаження...</p>;
 
