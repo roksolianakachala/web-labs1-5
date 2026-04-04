@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RentHome — оренда житла</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="#top">RentHome</a>
+
+      <nav class="nav" aria-label="Головна навігація">
+        <ul class="nav-list">
+          <li><a href="#apartments" data-description="Перегляд доступних квартир">Доступні квартири</a></li>
+          <li><a href="#bookings" data-description="Ваші додані бронювання">Мої бронювання</a></li>
+          <li><a href="#contacts" data-description="Зв'язок із сервісом RentHome">Контакти</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="top">
+
+    <section class="hero" aria-label="Вступ">
+      <div class="hero-text">
+        <h1>Орендуй квартиру швидко та зручно</h1>
+        <p>
+          Обирай житло за адресою, кількістю кімнат і ціною за ніч.
+          Переглядай свої підтверджені бронювання та зв’язуйся з нами, якщо потрібна допомога.
+        </p>
+        <ul class="feature-list">
+          <li>Перевірені оголошення</li>
+          <li>Зручна навігація</li>
+          <li>Підтверджені бронювання</li>
+        </ul>
+
+        <button id="toggleApartmentsBtn" class="btn toggle-btn" type="button">
+          Приховати список квартир
+        </button>
+
+        <p id="navInfo" class="nav-info">Наведіть курсор на пункт меню, щоб побачити опис.</p>
+      </div>
+
+      <img
+        class="hero-img"
+        src="https://images.unsplash.com/photo-1628592102751-ba83b0314276?q=80&w=1397&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        alt="Світла сучасна квартира"
+      />
+    </section>
+
+    <article id="apartments" class="section">
+      <header class="section-header">
+        <h2>Доступні квартири</h2>
+        <p>Оберіть варіант, що підходить за ціною та комфортом.</p>
+      </header>
+
+      <div class="cards" id="apartmentList" role="list"></div>
+    </article>
+
+    <article id="mapSection" class="section">
+      <header class="section-header">
+        <h2>Мапа квартир</h2>
+        <p>Натисніть на маркер, щоб переглянути інформацію про квартиру.</p>
+      </header>
+
+      <div class="map-wrapper">
+        <div class="city-map" id="cityMap">
+          <button class="map-marker" type="button" data-id="1" style="top: 28%; left: 48%;">1</button>
+          <button class="map-marker" type="button" data-id="2" style="top: 44%; left: 58%;">2</button>
+          <button class="map-marker" type="button" data-id="3" style="top: 80%; left: 30%;">3</button>
+        </div>
+
+        <div class="map-info" id="mapInfo">
+          <h3>Інформація про квартиру</h3>
+          <p>Оберіть маркер на мапі.</p>
+        </div>
+      </div>
+    </article>
+
+    <article id="bookings" class="section">
+      <header class="section-header">
+        <h2>Мої бронювання</h2>
+        <p>Підтверджені бронювання користувача.</p>
+      </header>
+
+      <div class="bookings" id="bookingList">
+        <div class="booking">
+          <h3>Студія в центрі</h3>
+          <p><strong>Дати:</strong> 10–12 березня</p>
+          <p><strong>Статус:</strong> Підтверджено ✅</p>
+        </div>
+
+        <div class="booking">
+          <h3>Двокімнатна біля метро</h3>
+          <p><strong>Дати:</strong> 20–23 березня</p>
+          <p><strong>Статус:</strong> Підтверджено ✅</p>
+        </div>
+      </div>
+    </article>
+
+    <article id="contacts" class="section">
+      <header class="section-header">
+        <h2>Контакти</h2>
+        <p>Напишіть нам — ми відповімо якнайшвидше.</p>
+      </header>
+
+      <div class="contacts-grid">
+        <form class="contact-form" id="contactForm" action="#" method="post">
+          <label>
+            Ім’я
+            <input type="text" name="name" id="name" placeholder="Ваше ім’я" />
+          </label>
+
+          <label>
+            Email
+            <input type="email" name="email" id="email" placeholder="name@example.com" />
+          </label>
+
+          <label>
+            Повідомлення
+            <textarea name="message" id="message" rows="5" placeholder="Ваше повідомлення..."></textarea>
+          </label>
+
+          <button class="btn" type="submit">Надіслати</button>
+        </form>
+
+        <div class="company-info" aria-label="Інформація про компанію">
+          <h3>RentHome</h3>
+          <p><strong>Адреса:</strong> м. Київ, вул. Прикладна, 1</p>
+          <p><strong>Телефон:</strong> +380 (44) 123-45-67</p>
+          <p><strong>Email:</strong> support@renthome.ua</p>
+          <p class="note">
+            Працюємо щодня 09:00–20:00.
+            Підтримка бронювань — у пріоритеті.
+          </p>
+        </div>
+      </div>
+
+      <div id="formResult" class="form-result"></div>
+    </article>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>© 2026 RentHome. Всі права захищено.</p>
+      <p class="footer-contacts">
+        Київ, вул. Прикладна, 1 · +380 (44) 123-45-67 · support@renthome.ua
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
