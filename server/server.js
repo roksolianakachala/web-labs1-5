@@ -109,7 +109,6 @@ app.get("/api/apartments/:id/reviews", async (req, res) => {
     const snapshot = await db
       .collection("reviews")
       .where("apartmentId", "==", id)
-      .orderBy("createdAt", "desc")
       .get();
 
     const allReviews = snapshot.docs.map((doc) => ({
@@ -117,8 +116,17 @@ app.get("/api/apartments/:id/reviews", async (req, res) => {
       ...doc.data(),
     }));
 
+    allReviews.sort((a, b) => {
+      const aTime = a.createdAt?._seconds || 0;
+      const bTime = b.createdAt?._seconds || 0;
+      return bTime - aTime;
+    });
+
     const startIndex = (page - 1) * limit;
     const paginatedReviews = allReviews.slice(startIndex, startIndex + limit);
+
+    console.log("Apartment ID:", id);
+    console.log("Reviews found:", allReviews.length);
 
     res.json({
       total: allReviews.length,
