@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../services/firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -14,17 +14,7 @@ export default function ApartmentDetails() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchApartment();
-
-  }, [id]);
-
-  useEffect(() => {
-    fetchReviews(page);
-    
-  }, [id, page]);
-
-  const fetchApartment = async () => {
+  const fetchApartment = useCallback(async () => {
     try {
       const docRef = doc(db, "apartments", id);
       const docSnap = await getDoc(docRef);
@@ -35,9 +25,9 @@ export default function ApartmentDetails() {
     } catch (error) {
       console.error("Помилка отримання квартири:", error);
     }
-  };
+  }, [id]);
 
-  const fetchReviews = async (currentPage = 1) => {
+  const fetchReviews = useCallback(async (currentPage = 1) => {
     try {
       const response = await fetch(
         `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews?page=${currentPage}&limit=10`
@@ -49,7 +39,15 @@ export default function ApartmentDetails() {
     } catch (error) {
       console.error("Помилка отримання відгуків:", error);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchApartment();
+  }, [fetchApartment]);
+
+  useEffect(() => {
+    fetchReviews(page);
+  }, [fetchReviews, page]);
 
   const handleAddReview = async (e) => {
     e.preventDefault();
@@ -68,7 +66,7 @@ export default function ApartmentDetails() {
 
     try {
       const response = await fetch(
-       `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews`,
+        `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews`,
         {
           method: "POST",
           headers: {

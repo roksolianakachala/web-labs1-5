@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import ApartmentList from "../components/ApartmentList";
 import BookedApartments from "../components/BookedApartments";
 import Filters from "../components/Filters";
@@ -6,7 +6,7 @@ import InteractiveMap from "../components/InteractiveMap";
 import { db } from "../services/firebase";
 import {
   collection,
- getDocs,
+  getDocs,
   addDoc,
   deleteDoc,
   doc,
@@ -30,19 +30,7 @@ function Home() {
     type: "",
   });
 
-  useEffect(() => {
-    fetchApartments();
-  }, []);
-
-  useEffect(() => {
-    if (user?.email) {
-      fetchBookings();
-    } else {
-      setBookings([]);
-    }
-  }, [user]);
-
-  const fetchApartments = async () => {
+  const fetchApartments = useCallback(async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "apartments"));
 
@@ -58,9 +46,11 @@ function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
+    if (!user?.email) return;
+
     try {
       console.log("fetchBookings user:", user);
 
@@ -83,7 +73,19 @@ function Home() {
       console.error("Помилка отримання бронювань:", error);
       alert("Помилка отримання бронювань: " + error.message);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchApartments();
+  }, [fetchApartments]);
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchBookings();
+    } else {
+      setBookings([]);
+    }
+  }, [user, fetchBookings]);
 
   const handleBook = async (apartment) => {
     console.log("CLICK on book");
