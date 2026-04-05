@@ -35,7 +35,7 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user?.email) {
       fetchBookings();
     } else {
       setBookings([]);
@@ -63,7 +63,7 @@ function Home() {
     try {
       const q = query(
         collection(db, "bookings"),
-        where("userId", "==", user.uid)
+        where("userEmail", "==", user.email)
       );
 
       const querySnapshot = await getDocs(q);
@@ -80,7 +80,7 @@ function Home() {
   };
 
   const handleBook = async (apartment) => {
-    if (!user) {
+    if (!user || !user.email) {
       alert("Увійдіть у систему, щоб бронювати квартиру");
       return;
     }
@@ -100,25 +100,25 @@ function Home() {
         apartmentTitle: apartment.title,
         apartmentPrice: apartment.price,
         apartmentLocation: apartment.location,
-        userId: user.uid,
         userEmail: user.email,
         userName: user.displayName || "Користувач",
         createdAt: serverTimestamp(),
       });
 
-      fetchBookings();
+      await fetchBookings();
     } catch (error) {
       console.error("Помилка бронювання:", error);
+      alert(error.message);
     }
   };
 
   const handleCancel = async (apartmentId) => {
-    if (!user) return;
+    if (!user || !user.email) return;
 
     try {
       const q = query(
         collection(db, "bookings"),
-        where("userId", "==", user.uid),
+        where("userEmail", "==", user.email),
         where("apartmentId", "==", apartmentId)
       );
 
@@ -128,7 +128,7 @@ function Home() {
         await deleteDoc(doc(db, "bookings", bookingDoc.id));
       }
 
-      fetchBookings();
+      await fetchBookings();
     } catch (error) {
       console.error("Помилка скасування броні:", error);
     }
