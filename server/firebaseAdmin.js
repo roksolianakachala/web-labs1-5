@@ -1,10 +1,15 @@
 const admin = require("firebase-admin");
-const path = require("path");
 
 let db = null;
 
 try {
-  const serviceAccount = require(path.join(__dirname, "serviceAccountKey.json"));
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+  if (!raw) {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT is missing");
+  }
+
+  const serviceAccount = JSON.parse(raw);
 
   if (!admin.apps.length) {
     admin.initializeApp({
@@ -15,7 +20,7 @@ try {
   db = admin.firestore();
   console.log("Firestore підключено успішно");
 } catch (error) {
-  console.log("Firestore не підключено. Перевір serviceAccountKey.json");
+  console.log("Firestore не підключено.");
   console.log(error.message);
 }
 
