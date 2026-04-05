@@ -6,7 +6,7 @@ import InteractiveMap from "../components/InteractiveMap";
 import { db } from "../services/firebase";
 import {
   collection,
-  getDocs,
+ getDocs,
   addDoc,
   deleteDoc,
   doc,
@@ -54,6 +54,7 @@ function Home() {
       setApartments(data);
     } catch (error) {
       console.error("Помилка отримання квартир:", error);
+      alert("Помилка отримання квартир: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -61,25 +62,34 @@ function Home() {
 
   const fetchBookings = async () => {
     try {
+      console.log("fetchBookings user:", user);
+
       const q = query(
         collection(db, "bookings"),
         where("userEmail", "==", user.email)
       );
 
       const querySnapshot = await getDocs(q);
+      console.log("bookings count:", querySnapshot.docs.length);
 
       const data = querySnapshot.docs.map((docSnapshot) => ({
         id: docSnapshot.id,
         ...docSnapshot.data(),
       }));
 
+      console.log("bookings data:", data);
       setBookings(data);
     } catch (error) {
       console.error("Помилка отримання бронювань:", error);
+      alert("Помилка отримання бронювань: " + error.message);
     }
   };
 
   const handleBook = async (apartment) => {
+    console.log("CLICK on book");
+    console.log("USER:", user);
+    console.log("APARTMENT:", apartment);
+
     if (!user || !user.email) {
       alert("Увійдіть у систему, щоб бронювати квартиру");
       return;
@@ -89,13 +99,15 @@ function Home() {
       (booking) => booking.apartmentId === apartment.id
     );
 
+    console.log("alreadyBooked:", alreadyBooked);
+
     if (alreadyBooked) {
       alert("Ви вже забронювали цю квартиру");
       return;
     }
 
     try {
-      await addDoc(collection(db, "bookings"), {
+      const docRef = await addDoc(collection(db, "bookings"), {
         apartmentId: apartment.id,
         apartmentTitle: apartment.title,
         apartmentPrice: apartment.price,
@@ -105,15 +117,24 @@ function Home() {
         createdAt: serverTimestamp(),
       });
 
+      console.log("BOOKING SAVED, id:", docRef.id);
+      alert("Бронювання додано");
+
       await fetchBookings();
     } catch (error) {
       console.error("Помилка бронювання:", error);
-      alert(error.message);
+      alert("Помилка бронювання: " + error.message);
     }
   };
 
   const handleCancel = async (apartmentId) => {
-    if (!user || !user.email) return;
+    console.log("CANCEL booking for apartmentId:", apartmentId);
+    console.log("USER:", user);
+
+    if (!user || !user.email) {
+      alert("Увійдіть у систему");
+      return;
+    }
 
     try {
       const q = query(
@@ -123,14 +144,17 @@ function Home() {
       );
 
       const querySnapshot = await getDocs(q);
+      console.log("cancel query found:", querySnapshot.docs.length);
 
       for (const bookingDoc of querySnapshot.docs) {
         await deleteDoc(doc(db, "bookings", bookingDoc.id));
       }
 
+      console.log("BOOKING CANCELLED");
       await fetchBookings();
     } catch (error) {
       console.error("Помилка скасування броні:", error);
+      alert("Помилка скасування броні: " + error.message);
     }
   };
 
