@@ -15,10 +15,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
 app.use(cors());
 app.use(express.json());
 
-// Тимчасове сховище користувачів
 const users = [];
 
-// Middleware для перевірки токена
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
 
@@ -37,12 +35,10 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// Тестовий маршрут
 app.get("/api/message", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
 
-// Реєстрація
 app.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -174,12 +170,8 @@ app.post("/api/apartments/:id/reviews", authMiddleware, async (req, res) => {
   }
 });
 
-// Хостинг статичних файлів React
-const frontendBuildPath = path.join(__dirname, "../my-react-app/build");
-app.use(express.static(frontendBuildPath));
-
-app.use((req, res) => {
-  res.sendFile(path.join(frontendBuildPath, "index.html"));
+app.get("/", (req, res) => {
+  res.send("Backend працює");
 });
 
 app.listen(PORT, () => {
