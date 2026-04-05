@@ -3,6 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
+const path = require("path"); 
 const { db, admin } = require("./firebaseAdmin");
 
 dotenv.config();
@@ -13,6 +14,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
 
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "build")));
 
 const users = [];
 
@@ -125,9 +128,6 @@ app.get("/api/apartments/:id/reviews", async (req, res) => {
     const startIndex = (page - 1) * limit;
     const paginatedReviews = allReviews.slice(startIndex, startIndex + limit);
 
-    console.log("Apartment ID:", id);
-    console.log("Reviews found:", allReviews.length);
-
     res.json({
       total: allReviews.length,
       page,
@@ -136,7 +136,6 @@ app.get("/api/apartments/:id/reviews", async (req, res) => {
       reviews: paginatedReviews,
     });
   } catch (error) {
-    console.error("Помилка отримання відгуків:", error);
     res.status(500).json({ message: "Помилка отримання відгуків" });
   }
 });
@@ -177,16 +176,15 @@ app.post("/api/apartments/:id/reviews", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Помилка додавання відгуку:", error);
     res.status(500).json({ message: "Помилка додавання відгуку" });
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("Backend працює");
+
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`API: http://localhost:${PORT}/api/message`);
 });
