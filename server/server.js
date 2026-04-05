@@ -3,7 +3,6 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
-const path = require("path");
 const { db, admin } = require("./firebaseAdmin");
 
 dotenv.config();
@@ -64,7 +63,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Логін
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -85,13 +83,12 @@ app.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token });
+    res.json({ token, email: user.email });
   } catch (error) {
     res.status(500).json({ message: "Помилка входу" });
   }
 });
 
-// Профіль
 app.get("/profile", authMiddleware, (req, res) => {
   res.json({
     message: "Профіль користувача",
@@ -99,7 +96,6 @@ app.get("/profile", authMiddleware, (req, res) => {
   });
 });
 
-// GET відгуків для конкретної квартири з пагінацією
 app.get("/api/apartments/:id/reviews", async (req, res) => {
   try {
     if (!db) {
@@ -137,24 +133,27 @@ app.get("/api/apartments/:id/reviews", async (req, res) => {
   }
 });
 
-// POST нового відгуку
-app.post("/api/apartments/:id/reviews", authMiddleware, async (req, res) => {
+app.post("/api/apartments/:id/reviews", async (req, res) => {
   try {
     if (!db) {
       return res.status(500).json({ message: "Firestore не підключено" });
     }
 
     const { id } = req.params;
-    const { text } = req.body;
+    const { text, userEmail } = req.body;
 
     if (!text || !text.trim()) {
       return res.status(400).json({ message: "Текст відгуку обов'язковий" });
     }
 
+    if (!userEmail || !userEmail.trim()) {
+      return res.status(400).json({ message: "Email користувача обов'язковий" });
+    }
+
     const newReview = {
       apartmentId: id,
-      userEmail: req.user.email,
-      text,
+      userEmail: userEmail.trim(),
+      text: text.trim(),
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -162,7 +161,12 @@ app.post("/api/apartments/:id/reviews", authMiddleware, async (req, res) => {
 
     res.status(201).json({
       message: "Відгук додано",
-      reviewId: docRef.id,
+      review: {
+        id: docRef.id,
+        apartmentId: id,
+        userEmail: userEmail.trim(),
+        text: text.trim(),
+      },
     });
   } catch (error) {
     console.error("Помилка додавання відгуку:", error);

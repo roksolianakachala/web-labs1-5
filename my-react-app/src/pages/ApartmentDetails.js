@@ -27,19 +27,23 @@ export default function ApartmentDetails() {
     }
   }, [id]);
 
-  const fetchReviews = useCallback(async (currentPage = 1) => {
-    try {
-      const response = await fetch(
-        `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews?page=${currentPage}&limit=10`
-      );
+  const fetchReviews = useCallback(
+    async (currentPage = 1) => {
+      try {
+        const response = await fetch(
+          `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews?page=${currentPage}&limit=10`
+        );
 
-      const data = await response.json();
-      setReviews(data.reviews || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (error) {
-      console.error("Помилка отримання відгуків:", error);
-    }
-  }, [id]);
+        const data = await response.json();
+
+        setReviews(data.reviews || []);
+        setTotalPages(data.totalPages || 1);
+      } catch (error) {
+        console.error("Помилка отримання відгуків:", error);
+      }
+    },
+    [id]
+  );
 
   useEffect(() => {
     fetchApartment();
@@ -52,15 +56,13 @@ export default function ApartmentDetails() {
   const handleAddReview = async (e) => {
     e.preventDefault();
 
-    if (!user) {
+    if (!user || !user.email) {
       alert("Спочатку увійдіть у систему");
       return;
     }
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Токен не знайдено. Виконайте вхід ще раз.");
+    if (!text.trim()) {
+      alert("Введіть текст відгуку");
       return;
     }
 
@@ -71,9 +73,11 @@ export default function ApartmentDetails() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({
+            text: text.trim(),
+            userEmail: user.email,
+          }),
         }
       );
 
@@ -82,12 +86,13 @@ export default function ApartmentDetails() {
       if (response.ok) {
         setText("");
         setPage(1);
-        fetchReviews(1);
+        await fetchReviews(1);
       } else {
         alert(data.message || "Не вдалося додати відгук");
       }
     } catch (error) {
       console.error("Помилка додавання відгуку:", error);
+      alert("Помилка додавання відгуку");
     }
   };
 
@@ -107,10 +112,18 @@ export default function ApartmentDetails() {
         <p className="description">{apartment.description}</p>
 
         <div className="info">
-          <p><strong>📍 Локація:</strong> {apartment.location}</p>
-          <p><strong>💰 Ціна:</strong> {apartment.price} грн/міс</p>
-          <p><strong>🛏 Кімнати:</strong> {apartment.rooms}</p>
-          <p><strong>🏠 Тип:</strong> {apartment.type}</p>
+          <p>
+            <strong>📍 Локація:</strong> {apartment.location}
+          </p>
+          <p>
+            <strong>💰 Ціна:</strong> {apartment.price} грн/міс
+          </p>
+          <p>
+            <strong>🛏 Кімнати:</strong> {apartment.rooms}
+          </p>
+          <p>
+            <strong>🏠 Тип:</strong> {apartment.type}
+          </p>
         </div>
 
         <div className="reviews">
@@ -145,7 +158,14 @@ export default function ApartmentDetails() {
             )}
           </div>
 
-          <div style={{ marginTop: "16px", display: "flex", gap: "10px", alignItems: "center" }}>
+          <div
+            style={{
+              marginTop: "16px",
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+            }}
+          >
             <button
               type="button"
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
