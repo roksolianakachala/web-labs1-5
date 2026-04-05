@@ -40,7 +40,7 @@ export default function ApartmentDetails() {
   const fetchReviews = async (currentPage = 1) => {
     try {
       const response = await fetch(
-        `http://localhost:5001/api/apartments/${id}/reviews?page=${currentPage}&limit=10`
+        `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews?page=${currentPage}&limit=10`
       );
 
       const data = await response.json();
@@ -68,7 +68,7 @@ export default function ApartmentDetails() {
 
     try {
       const response = await fetch(
-        `http://localhost:5001/api/apartments/${id}/reviews`,
+       `https://web-labs1-5.onrender.com/api/apartments/${id}/reviews`,
         {
           method: "POST",
           headers: {
