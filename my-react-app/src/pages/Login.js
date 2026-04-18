@@ -29,9 +29,15 @@ export default function Login() {
         return;
       }
 
+      // беремо ім'я з localStorage (з реєстрації)
+      const savedName = localStorage.getItem("userName") || "Користувач";
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("userEmail", email);
-      loginUser(email);
+      localStorage.setItem("userName", savedName);
+
+      // 👇 ГОЛОВНА ЗМІНА
+      loginUser({ email, name: savedName });
 
       setMessage("Вхід успішний");
       navigate("/");

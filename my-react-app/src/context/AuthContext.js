@@ -8,19 +8,30 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userEmail = localStorage.getItem("userEmail");
+    const userName = localStorage.getItem("userName");
 
     if (token && userEmail) {
-      setUser({ email: userEmail });
+      setUser({
+        email: userEmail,
+        name: userName || "Користувач",
+      });
     }
   }, []);
 
-  const loginUser = (email) => {
-    setUser({ email });
+  const loginUser = ({ email, name }) => {
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("userName", name || "Користувач");
+
+    setUser({
+      email,
+      name: name || "Користувач",
+    });
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
     setUser(null);
   };
 

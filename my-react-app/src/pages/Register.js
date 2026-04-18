@@ -34,6 +34,9 @@ export default function Register() {
         return;
       }
 
+      const fullName = `${firstName} ${lastName}`.trim();
+      localStorage.setItem("userName", fullName);
+
       setMessage("Реєстрація успішна");
 
       setTimeout(() => {

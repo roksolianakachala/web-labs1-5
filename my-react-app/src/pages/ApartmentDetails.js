@@ -77,6 +77,7 @@ export default function ApartmentDetails() {
           body: JSON.stringify({
             text: text.trim(),
             userEmail: user.email,
+            userName: user.name || "Користувач",
           }),
         }
       );
@@ -151,7 +152,7 @@ export default function ApartmentDetails() {
             ) : (
               reviews.map((review) => (
                 <div key={review.id} className="review-card">
-                  <strong>{review.userEmail}</strong>
+                  <strong>{review.userName || review.userEmail}</strong>
                   <p>{review.text}</p>
                 </div>
               ))
