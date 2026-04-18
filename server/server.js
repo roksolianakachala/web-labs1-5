@@ -3,7 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
-const path = require("path"); 
+const path = require("path");
 const { db, admin } = require("./firebaseAdmin");
 
 dotenv.config();
@@ -43,7 +43,7 @@ app.get("/api/message", (req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
     const existingUser = users.find((user) => user.email === email);
     if (existingUser) {
@@ -51,16 +51,22 @@ app.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const fullName = `${firstName || ""} ${lastName || ""}`.trim() || "Користувач";
 
     const newUser = {
       id: Date.now().toString(),
       email,
       password: hashedPassword,
+      name: fullName,
     };
 
     users.push(newUser);
 
-    res.status(201).json({ message: "Користувача створено" });
+    res.status(201).json({
+      message: "Користувача створено",
+      email: newUser.email,
+      name: newUser.name,
+    });
   } catch (error) {
     res.status(500).json({ message: "Помилка реєстрації" });
   }
@@ -81,12 +87,16 @@ app.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, name: user.name },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    res.json({ token, email: user.email });
+    res.json({
+      token,
+      email: user.email,
+      name: user.name,
+    });
   } catch (error) {
     res.status(500).json({ message: "Помилка входу" });
   }
@@ -147,7 +157,7 @@ app.post("/api/apartments/:id/reviews", async (req, res) => {
     }
 
     const { id } = req.params;
-    const { text, userEmail } = req.body;
+    const { text, userEmail, userName } = req.body;
 
     if (!text || !text.trim()) {
       return res.status(400).json({ message: "Текст відгуку обов'язковий" });
@@ -160,6 +170,7 @@ app.post("/api/apartments/:id/reviews", async (req, res) => {
     const newReview = {
       apartmentId: id,
       userEmail: userEmail.trim(),
+      userName: userName ? userName.trim() : "Користувач",
       text: text.trim(),
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
@@ -172,6 +183,7 @@ app.post("/api/apartments/:id/reviews", async (req, res) => {
         id: docRef.id,
         apartmentId: id,
         userEmail: userEmail.trim(),
+        userName: userName ? userName.trim() : "Користувач",
         text: text.trim(),
       },
     });
@@ -179,7 +191,6 @@ app.post("/api/apartments/:id/reviews", async (req, res) => {
     res.status(500).json({ message: "Помилка додавання відгуку" });
   }
 });
-
 
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
